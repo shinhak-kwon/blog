@@ -25,8 +25,9 @@ import {
 } from '@/lib/data-utils'
 import { formatDate } from '@/lib/utils'
 import { Icon } from 'astro-icon/components'
-import { Image } from 'astro:assets'
+import { Image, getImage } from 'astro:assets'
 import { render } from 'astro:content'
+import { ImageWithGradient } from '@/components/ImageWithGradient'
 
 export async function getStaticPaths() {
   const posts = await getAllPostsAndSubposts()
@@ -56,6 +57,7 @@ const combinedReadingTime =
     : null
 
 const tocSections = await getTOCSections(currentPostId)
+const optimizedImage = post.data.image ? await getImage({ src: post.data.image, format: 'webp' }) : null
 ---
 
 <Layout>
@@ -109,14 +111,15 @@ const tocSections = await getTOCSections(currentPostId)
     </div>
 
     {
-      post.data.image && (
-        <Image
-          src={post.data.image}
-          alt={post.data.title}
-          width={1200}
-          height={630}
-          class="col-span-full mx-auto w-full max-w-5xl object-cover"
-        />
+      post.data.image && optimizedImage && (
+        <div class="col-span-full mx-auto w-full max-w-5xl">
+          <ImageWithGradient
+            client:visible
+            src={optimizedImage.src}
+            alt={post.data.title}
+            className="w-full"
+          />
+        </div>
       )
     }
 

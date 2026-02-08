@@ -35,3 +35,23 @@ export function getHeadingMargin(depth: number): string {
   }
   return margins[depth] || ''
 }
+
+export function formatLink(href: string) {
+  if (href.startsWith('http') || href.startsWith('mailto') || href.startsWith('#')) return href
+  const base = import.meta.env.BASE_URL.replace(/\/$/, '')
+  
+  // Ensure we don't double-prepend if the base is '/'
+  if (base === '') return href
+  
+  // If the link is strictly just the base, return it (avoids duplication if input was just '/')
+  if (href === '/' && base) return base
+
+  if (!href.startsWith('/')) return href
+  
+  // CRITICAL FIX: The previous check `if (href.startsWith(base))` was causing false positives 
+  // because the collection name 'blog' matches the base path '/blog'. 
+  // We must assume all absolute paths passed to this function are intended to be relative to the site root,
+  // NOT the domain root, so we always prepend base unless it's literally just a double slash or something weird.
+  
+  return `${base}${href}`
+}

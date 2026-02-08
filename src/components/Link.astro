@@ -1,5 +1,5 @@
 ---
-import { cn } from '@/lib/utils'
+import { cn, formatLink } from '@/lib/utils'
 
 interface Props {
   href: string
@@ -9,7 +9,8 @@ interface Props {
   [key: string]: any
 }
 
-const { href, external, class: className, underline, ...rest } = Astro.props
+const { href: rawHref, external, class: className, underline, ...rest } = Astro.props
+const href = external ? rawHref : formatLink(rawHref)
 ---
 
 <a
